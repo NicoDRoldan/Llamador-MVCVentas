@@ -105,7 +105,6 @@
                     url: "http://localhost:5000/api/PedidoActuales/OrderGroup",
                     type: "GET",
                     success: function (data) {
-                        console.log("La data pa: \n", data);
                         $("#orderBody").empty();
                         $.each(data, function (index, item) {
                             var row = "<tr><td><a href='#' class='detallePedido' id='detallePedido_"+item.numPedido+"' data-numPedido='" + item.numPedido + "'>" + item.numPedido + "</a></td><td>" + item.retira + "</td></tr>";
@@ -120,6 +119,8 @@
         });
 
         $(document).on("click", ".detallePedido", function(){
+             $("#order-modal-body").empty();
+
             var numPedido = $(this).attr('data-numPedido'); // Obtener el valor de data-numPedido del elemento clickeado.
             $("#order-details-ModalLabel").text("Detalles del Pedido: " + numPedido); // Actualizar el número de pedido en el modal.
             $("#order-details-Modal").modal("show"); // Abrir Modal.
@@ -128,8 +129,6 @@
                 url: "http://localhost:5000/api/PedidoActuales/OrderGroup/" + numPedido, 
                 type: "GET",
                 success: function (data){
-                    console.log("La super data pa: \n", data);
-                    $("#order-modal-body").empty();
 
                     // Agregar el número de artículo, nombre y cantidad al body del modal:
                 $.each(data[0].detallePedidos, function (index, detalle) {
@@ -143,6 +142,11 @@
                 });
                 },
                 error: function (){
+                    var detalleHtml = "<div class='detallePedidoModal'>";
+                    detalleHtml += "<div>Error al obtener los datos.</div>";
+
+                    $("#order-modal-body").append(detalleHtml);
+
                     console.log("Error al obtener los datos.");
                 }
             });
