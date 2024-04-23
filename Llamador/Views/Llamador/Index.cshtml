@@ -13,6 +13,15 @@
     .custom-column {
         width: 50%;
     }
+    
+    .modal-body .detallePedidoModal:nth-child(even) {
+        background-color: #ffffff; /* Fondo blanco */
+    }
+
+    /* Estilo para filas impares */
+    .modal-body .detallePedidoModal:nth-child(odd) {
+    background-color: #ddebff; /* Fondo gris claro */
+    }
 </style>
 
 <html>
@@ -54,6 +63,30 @@
                     </tbody>
                 </table>
             </div>
+                    <!-- start modal whit order details -->
+
+                    <div class="modal fade" id="order-details-Modal" tabindex="-1" role="dialog" aria-labelledby="order-details-ModalLabel" aria-hidden="true">
+                        <div class=" modal-dialog" role="document">
+                            <div class="modal-content" id="order-details-Modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="order-details-ModalLabel">Detalles del Pedido:</h5>
+                                </div>
+                                <div class="modal-body" id="order-modal-body">
+                                    <div class="form-group row">
+                                        <!-- start body of modal -->
+
+                                        <!-- end body of modal -->
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="Modal" onclick="cerrarModal()" >Cerrar</button>
+                                    <div id="mensaje-order-details" style="margin-top: 5px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- end modal with order details-->
         </div>
     </div>
 </body>
@@ -61,16 +94,21 @@
 
 @section Scripts{
     <script>
+        function cerrarModal(){
+            $("#order-details-Modal").modal("hide");
+            $("#order-modal-body").empty(); 
+        }
+
         $(document).ready(function () {
             setInterval(function () {
                 $.ajax({
                     url: "http://localhost:5000/api/PedidoActuales/OrderGroup",
                     type: "GET",
                     success: function (data) {
-                        console.log(data);
+                        console.log("La data pa: \n", data);
                         $("#orderBody").empty();
                         $.each(data, function (index, item) {
-                            var row = "<tr><td>" + item.numPedido + "</td><td>" + item.retira + "</td></tr>";
+                            var row = "<tr><td><a href='#' class='detallePedido' id='detallePedido_"+item.numPedido+"' data-numPedido='" + item.numPedido + "'>" + item.numPedido + "</a></td><td>" + item.retira + "</td></tr>";
                             $("#orderBody").append(row);
                         });
                     },
@@ -79,6 +117,35 @@
                     }
                 });
             }, 1000);
+        });
+
+        $(document).on("click", ".detallePedido", function(){
+            var numPedido = $(this).attr('data-numPedido'); // Obtener el valor de data-numPedido del elemento clickeado.
+            $("#order-details-ModalLabel").text("Detalles del Pedido: " + numPedido); // Actualizar el número de pedido en el modal.
+            $("#order-details-Modal").modal("show"); // Abrir Modal.
+
+            $.ajax({
+                url: "http://localhost:5000/api/PedidoActuales/OrderGroup/" + numPedido, 
+                type: "GET",
+                success: function (data){
+                    console.log("La super data pa: \n", data);
+                    $("#order-modal-body").empty();
+
+                    // Agregar el número de artículo, nombre y cantidad al body del modal:
+                $.each(data[0].detallePedidos, function (index, detalle) {
+                    var detalleHtml = "<div class='detallePedidoModal'>";
+                    detalleHtml += "<div>ID: " + detalle.articulo.id_Articulo + "</div>";
+                    detalleHtml += "<div>Artículo: " + detalle.articulo.nombre + "</div>";
+                    detalleHtml += "<div>Cantidad: " + detalle.cantidad + "</div>";
+                    detalleHtml += "</div>";
+
+                    $("#order-modal-body").append(detalleHtml);
+                });
+                },
+                error: function (){
+                    console.log("Error al obtener los datos.");
+                }
+            });
         });
     </script>
 }
