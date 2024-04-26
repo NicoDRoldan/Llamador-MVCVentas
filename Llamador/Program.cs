@@ -1,8 +1,11 @@
+using Llamador.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<LlamadorService>();
 
 var app = builder.Build();
 

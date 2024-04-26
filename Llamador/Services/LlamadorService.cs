@@ -1,7 +1,5 @@
 ﻿using Llamador.Models;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Llamador.Services
 {
@@ -12,19 +10,20 @@ namespace Llamador.Services
         public LlamadorService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("http://localhost:5000/api");
         }
 
-        public async Task<LlamadorModel> GetDataApi()
+        public async Task<IEnumerable<OrderGroupModel>> GetOrderGroupsAsync()
         {
-            var response = await _httpClient.GetAsync("http://localhost:5000/api/PedidoActuales/PedidosActuales");
+            var response = await _httpClient.GetAsync("api/PedidoActuales/OrderGroup");
 
             if (response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadFromJsonAsync<LlamadorModel>();
-                return content;
+                var content = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<IEnumerable<OrderGroupModel>>(content);
             }
-
-            return null;
+            return new List<OrderGroupModel>();
         }
+
     }
 }
