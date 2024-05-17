@@ -7,6 +7,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<LlamadorService>();
 
+builder.WebHost.UseUrls("https://localhost:7160");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

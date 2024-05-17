@@ -102,12 +102,13 @@
         $(document).ready(function () {
             setInterval(function () {
                 $.ajax({
-                    url: "http://localhost:5000/api/PedidoActuales/OrderGroup",
+                    url: "https://localhost:7200/api/PedidoActuales/OrderGroup",
                     type: "GET",
                     success: function (data) {
                         $("#orderBody").empty();
                         $.each(data, function (index, item) {
-                            var row = "<tr><td><a href='#' class='detallePedido' id='detallePedido_"+item.numPedido+"' data-numPedido='" + item.numPedido + "'>" + item.numPedido + "</a></td><td>" + item.retira + "</td></tr>";
+                            var row = "<tr><td><a href='#' class='detallePedido' id='detallePedido_"+item.numPedido+"' data-numPedido='" 
+                            + item.numPedido + "'>" + item.numPedido + "</a></td><td>" + item.retira + "</td></tr>";
                             $("#orderBody").append(row);
                         });
                     },
@@ -126,7 +127,7 @@
             $("#order-details-Modal").modal("show"); // Abrir Modal.
 
             $.ajax({
-                url: "http://localhost:5000/api/PedidoActuales/OrderGroup/" + numPedido, 
+                url: "https://localhost:7200/api/PedidoActuales/OrderGroup/" + numPedido,
                 type: "GET",
                 success: function (data){
 

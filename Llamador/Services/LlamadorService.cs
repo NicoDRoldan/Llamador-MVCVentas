@@ -10,7 +10,7 @@ namespace Llamador.Services
         public LlamadorService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("http://localhost:5000/api");
+            _httpClient.BaseAddress = new Uri("https://localhost:7200/api");
         }
 
         public async Task<IEnumerable<OrderGroupModel>> GetOrderGroupsAsync()
